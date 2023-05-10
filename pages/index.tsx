@@ -14,7 +14,7 @@ const Home: NextPage = () => {
     : activities;
 
   useEffect(() => {
-    fetch(process.env.API_ENDPOINT || "")
+    fetch("https://random-activities-api.herokuapp.com/activities")
       .then((response) => response.json())
       .then((data) => setActivities(data));
   }, []);

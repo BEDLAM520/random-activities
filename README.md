@@ -27,16 +27,7 @@ cd random-activities
 yarn
 ```
 
-4. Set up the API endpoint:
-
-Create a file named .env.local in the root directory of the project.
-In the .env.local file, add the following line:
-
-```bash
-API_ENDPOINT=https://your-api-endpoint.com
-```
-
-5. Run the development server:
+4. Run the development server:
 
 ```bash
 yarn dev
