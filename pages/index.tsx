@@ -3,20 +3,30 @@ import InfoSection from "../components/InfoSection";
 import React, { useState, useEffect } from "react";
 import { ActivityInterface } from "../models/Activity";
 import ActivityCard from "../components/ActivityCard";
+import { FaCircleNotch, FaSpinner } from "react-icons/fa";
 
 const Home: NextPage = () => {
   const [activities, setActivities] = useState<ActivityInterface[]>([]);
   const [activityTypes, setActivityTypes] = useState<String[]>([]);
+  const [loadingActivities, SetLoadingActivities] = useState<Boolean>(false);
   const [selectedType, setSelectedType] = useState("");
 
-  const filteredActivities = selectedType
+  const filteredActivities: ActivityInterface[] = selectedType
     ? activities.filter((activity) => activity.type === selectedType)
     : activities;
 
   useEffect(() => {
+    SetLoadingActivities(true);
     fetch("https://random-activities-api.herokuapp.com/activities")
       .then((response) => response.json())
-      .then((data) => setActivities(data));
+      .then((data) => {
+        setActivities(data);
+        SetLoadingActivities(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        SetLoadingActivities(false);
+      });
   }, []);
 
   useEffect(() => {
@@ -39,7 +49,7 @@ const Home: NextPage = () => {
       <div
         className={`flex flex-1 flex-col justify-start gap-4 p-8 md:p-20 py-20 bg-primary`}
       >
-        <div className="flex flex-row justify-between items-center">
+        <div className="flex flex-row justify-between items-center mb-6">
           <p className="text-lg font-medium text-white">The Activity List</p>
           <select
             className="w-[150px] py-2 px-3 border-none bg-white rounded-md focus:outline-none sm:text-sm"
@@ -55,9 +65,17 @@ const Home: NextPage = () => {
           </select>
         </div>
         <div className="flex flex-col justify-start items-stretch flex-wrap lg:flex-row gap-8 mb-6">
-          {filteredActivities.map((activity, index) => (
-            <ActivityCard key={index} activity={activity} />
-          ))}
+          {loadingActivities ? (
+            <FaSpinner className="text-white text-xl mr-2 animate-spin" />
+          ) : filteredActivities.length === 0 ? (
+            <p className="text-md font-medium text-white">
+              It looks like there is not activities loaded at the moment.
+            </p>
+          ) : (
+            filteredActivities.map((activity, index) => (
+              <ActivityCard key={index} activity={activity} />
+            ))
+          )}
         </div>
       </div>
     </div>
